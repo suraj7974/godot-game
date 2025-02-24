@@ -1,0 +1,82 @@
+[gd_scene load_steps=9 format=3 uid="uid://dj8qwbrjqjl15"]
+
+[ext_resource type="Texture2D" uid="uid://dv1k022cvofvv" path="res://assets/sprites/knight.png" id="1_poyaw"]
+
+[sub_resource type="GDScript" id="GDScript_fbto4"]
+script/source = "extends CharacterBody2D
+
+
+const SPEED = 300.0
+const JUMP_VELOCITY = -400.0
+
+
+func _physics_process(delta: float) -> void:
+	# Add the gravity.
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+
+	# Handle jump.
+	if Input.is_action_just_pressed(\"ui_accept\") and is_on_floor():
+		velocity.y = JUMP_VELOCITY
+
+	# Get the input direction and handle the movement/deceleration.
+	# As good practice, you should replace UI actions with custom gameplay actions.
+	var direction := Input.get_axis(\"ui_left\", \"ui_right\")
+	if direction:
+		velocity.x = direction * SPEED
+	else:
+		velocity.x = move_toward(velocity.x, 0, SPEED)
+
+	move_and_slide()
+"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j7mdw"]
+atlas = ExtResource("1_poyaw")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cpqam"]
+atlas = ExtResource("1_poyaw")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_egoye"]
+atlas = ExtResource("1_poyaw")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yvjqk"]
+atlas = ExtResource("1_poyaw")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vjtux"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j7mdw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cpqam")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_egoye")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yvjqk")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_02urv"]
+radius = 5.0
+
+[node name="player" type="CharacterBody2D"]
+script = SubResource("GDScript_fbto4")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_vjtux")
+autoplay = "default"
+frame_progress = 0.333084
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 5)
+shape = SubResource("CircleShape2D_02urv")
